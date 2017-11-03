@@ -10,12 +10,24 @@ import java.util.Collections;
 
 public class Library
 {
-    ArrayList<LibraryNode> library;
+    private ArrayList<String> library;
+    private boolean locked;
 
-    public Library()
+    private static Library instance = null;
+
+    protected Library()
     {
-        this.library = new ArrayList<LibraryNode>();
+        this.library = new ArrayList<String>();
+        this.locked = false;
     }
+
+    public static Library getInstance() {
+      if(instance == null) {
+         instance = new Library();
+      }
+
+      return instance;
+   }
 
     protected void populate(String filePath)
     {
@@ -25,8 +37,7 @@ public class Library
 
             String word = inputReader.readLine();
             while (word != null) {
-                LibraryNode wordNode = new LibraryNode(word);
-                this.library.add(wordNode);
+                this.library.add(word);
                 word = inputReader.readLine();
             }
         }
@@ -38,8 +49,28 @@ public class Library
         }
     }
 
-    public int getCount()
+    public int size()
     {
         return this.library.size();
+    }
+
+    public String get(int position)
+    {
+        return this.library.get(position);
+    }
+
+    public boolean isLocked()
+    {
+        return this.locked;
+    }
+
+    public void lock()
+    {
+        this.locked = true;
+    }
+
+    public void unlock()
+    {
+        this.locked = false;
     }
 }

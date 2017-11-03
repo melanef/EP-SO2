@@ -15,8 +15,9 @@ public class Main
 
     public static void main(String[] args)
     {
-        Library library = new Library();
+        RandomGenerator randomizer = RandomGenerator.init();
+        Library library = Library.getInstance();
         library.populate(Main.INPUT_FILEPATH);
-        System.out.println("Total de entradas: " + library.getCount());
+        System.out.println("Total de entradas: " + library.size());
     }
 }
