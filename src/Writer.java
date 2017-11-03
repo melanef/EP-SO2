@@ -1,14 +1,14 @@
 
 import java.lang.Thread;
+import java.lang.InterruptedException;
 
-public class Reader extends Thread
+public class Writer extends Thread
 {
     public static final int ACCESS_QUANTITY = 100;
     public static final int SLEEP_TIME = 1;
 
     public void run()
     {
-        String word;
         Library library = Library.getInstance();
 
         while(true) {
@@ -17,13 +17,13 @@ public class Reader extends Thread
 
                 RandomGenerator randomizer = RandomGenerator.getInstance();
 
-                for (int i = 0; i < Reader.ACCESS_QUANTITY; i++) {
+                for (int i = 0; i < Writer.ACCESS_QUANTITY; i++) {
                     int randomPosition = randomizer.getRandomLibraryPosition();
-                    word = library.get(randomPosition);
+                    library.set(randomPosition, "MODIFICADO");
                 }
 
                 try {
-                    this.sleep(Reader.SLEEP_TIME);
+                    this.sleep(Writer.SLEEP_TIME);
                 }
                 catch (InterruptedException exception) {}
 

@@ -59,6 +59,11 @@ public class Library
         return this.library.get(position);
     }
 
+    public void set(int position, String word)
+    {
+        this.library.set(position, word);
+    }
+
     public boolean isLocked()
     {
         return this.locked;

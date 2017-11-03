@@ -22,7 +22,7 @@ public class RandomGenerator
             RandomGenerator.init();
         }
 
-        return this.instance;
+        return instance;
     }
 
     public int getRandomLibraryPosition()
