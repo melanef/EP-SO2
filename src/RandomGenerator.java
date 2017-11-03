@@ -30,4 +30,9 @@ public class RandomGenerator
         Library library = Library.getInstance();
         return this.randomizer.nextInt(library.size());
     }
+
+    public int nextInt(int limit)
+    {
+        return this.randomizer.nextInt(limit);
+    }
 }

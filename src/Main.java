@@ -11,7 +11,8 @@ public class Main
 
     public static void main(String[] args)
     {
-        RandomGenerator randomizer = RandomGenerator.init();
+        RandomGenerator.init();
+        RandomGenerator randomizer = RandomGenerator.getInstance();
         Library library = Library.getInstance();
         library.populate(Main.INPUT_FILEPATH);
         System.out.println("Total de entradas: " + library.size());
