@@ -29,21 +29,21 @@ public class Main
                             break outerloop;
                         }
 
-                        threads[position] = new Reader();
+                        threads[position] = (Thread) new Reader();
                     } else {
                         if (threads[position] != null) {
                             System.out.println("ERRO! Posição já ocupada!");
                             break outerloop;
                         }
 
-                        threads[position] = new Writer();
+                        threads[position] = (Thread) new Writer();
                     }
                 }
 
                 // Inicia o temporizador
 
                 for (int k = 0; k < Main.THREAD_QUANTITY; k++) {
-                    threads[k].run();
+                    threads[k].start();
                 }
 
                 // Encerra o temporizador
