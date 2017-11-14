@@ -1,38 +1,33 @@
 
+import java.lang.Integer;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class RandomGenerator
 {
     protected Random randomizer;
-    protected static RandomGenerator instance = null;
+    protected ArrayList<Integer> usedNumbers;
 
-    protected RandomGenerator()
+    public RandomGenerator()
     {
         this.randomizer = new Random();
-    }
-
-    public static void init()
-    {
-        instance = new RandomGenerator();
-    }
-
-    public static RandomGenerator getInstance()
-    {
-        if (instance == null) {
-            RandomGenerator.init();
-        }
-
-        return instance;
-    }
-
-    public int getRandomLibraryPosition()
-    {
-        Library library = Library.getInstance();
-        return this.randomizer.nextInt(library.size());
+        this.usedNumbers = new ArrayList<Integer>();
     }
 
     public int nextInt(int limit)
     {
-        return this.randomizer.nextInt(limit);
+        boolean numberChose = false;
+        Integer number = null;
+        while (!numberChose) {
+            number = new Integer(this.randomizer.nextInt(limit));
+
+            if (!this.usedNumbers.contains(number)) {
+                this.usedNumbers.add(number);
+                numberChose = true;
+                break;
+            }
+        }
+
+        return number.intValue();
     }
 }
