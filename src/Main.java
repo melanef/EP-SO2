@@ -1,53 +1,81 @@
 
+import java.lang.Integer;
 import java.lang.String;
-import java.lang.Thread;
+import java.lang.InterruptedException;
+import java.util.ArrayList;
 
 public class Main
 {
     public static final String INPUT_FILEPATH = "../input/bd.txt";
-    public static final int THREAD_QUANTITY = 100;
+    public static final int THREAD_QUANTITY = 10;
     public static final int SAMPLE_SIZE = 50;
     private Library library;
 
     public static void main(String[] args)
     {
-        RandomGenerator.init();
-        RandomGenerator randomizer = RandomGenerator.getInstance();
         Library library = Library.getInstance();
         library.populate(Main.INPUT_FILEPATH);
-        System.out.println("Total de entradas: " + library.size());
 
-        outerloop:
-        for (int i = 0; i <= Main.THREAD_QUANTITY; i++) {
-            for (int j = 0; j < Main.SAMPLE_SIZE; j++) {
-                Thread [] threads = new Thread[Main.THREAD_QUANTITY];
-                for (int k = 0; k < Main.THREAD_QUANTITY; k++) {
-                    int position = randomizer.nextInt(Main.THREAD_QUANTITY);
-                    if (k >= i) {
-                        if (threads[position] != null) {
-                            System.out.println("ERRO! Posição já ocupada!");
-                            break outerloop;
-                        }
+        System.out.println("\nModo: lock padrão");
+        Main.test();
+        library.setReadWriteLock();
+        System.out.println("\nModo: lock leitor-escritor");
+        Main.test();
+    }
 
-                        threads[position] = (Thread) new Reader();
-                    } else {
-                        if (threads[position] != null) {
-                            System.out.println("ERRO! Posição já ocupada!");
-                            break outerloop;
-                        }
+    public static MyThread [] fillThreads(int writersQuantity)
+    {
+        MyThread [] threads = new MyThread[Main.THREAD_QUANTITY];
 
-                        threads[position] = (Thread) new Writer();
-                    }
-                }
+        ArrayList<Integer> usedPositions = new ArrayList<Integer>();
+        int position;
+        MyThread thread = null;
+        RandomGenerator randomizer = new RandomGenerator();
 
-                // Inicia o temporizador
+        for (int i = 0; i < Main.THREAD_QUANTITY; i++) {
+            position = randomizer.nextInt(Main.THREAD_QUANTITY);
 
-                for (int k = 0; k < Main.THREAD_QUANTITY; k++) {
-                    threads[k].start();
-                }
-
-                // Encerra o temporizador
+            if (i < writersQuantity) {
+                thread = (MyThread) new Writer();
+                //System.out.println(position + " - Writer");
+            } else {
+                thread = (MyThread) new Reader();
+                //System.out.println(position + " - Reader");
             }
+
+            threads[position] = thread;
+        }
+
+        return threads;
+    }
+
+    public static void test()
+    {
+        long begin, end, sum;
+        for (int i = 0; i <= Main.THREAD_QUANTITY; i++) {
+            sum = 0;
+            for (int j = 0; j < Main.SAMPLE_SIZE; j++) {
+                MyThread [] threads = Main.fillThreads(i);
+
+                begin = System.currentTimeMillis();
+                for (int l = 0; l < Main.THREAD_QUANTITY; l++) {
+                    //System.out.println("Thread #" + l + " - Beginning");
+                    threads[l].setPosition(l);
+                    threads[l].start();
+                }
+
+                for (int l = 0; l < Main.THREAD_QUANTITY; l++) {
+                    try {
+                        threads[l].join();
+                    }
+                    catch (InterruptedException exception) {}
+                }
+
+                end = System.currentTimeMillis();
+                sum += end - begin;
+            }
+
+            System.out.println("#Writers: " + i  + " - #Readers: " + (Main.THREAD_QUANTITY - i) + " - Média do Tempo de execução: " + (sum / Main.SAMPLE_SIZE));
         }
     }
 }
